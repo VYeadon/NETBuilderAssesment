@@ -32,8 +32,13 @@ public class Family {
 		System.out.println(this.getParent("Frank"));
 		System.out.println(this.setParent("Morgan", "Frank"));
 		
+		
+		String[] parArray = this.getParent("Frank").split(",");
+		
+		System.out.println(parArray[0]);
 	}
-	//  Name,       gender,              parents,               children
+	
+
 	Map<String, String>
 	nameMap = new HashMap<String, String>();
 	
@@ -85,7 +90,67 @@ public class Family {
 		}
 	}
 	
-// ---- My functions above /\ --------------------------- Required functions below \/ -----
+
+	// This function is not finished yet, i have run out of time
+	public boolean checkAncestor(String childName, String parentName)
+	{
+		boolean token = true;
+		
+		if(childMap.get(parentName)== null)
+		{
+			return true;
+		}
+		
+		if(childMap.get(parentName).contains(childName))
+		{
+			return false;
+		}
+		
+		// checks if already grandparent into an array
+		String[] grandParents = getParent(parentName).split(",");
+		
+		for(int i=0;i<grandParents.length;i++)
+		{
+			// filters the strings
+			grandParents[i].replaceAll("[^a-zA-Z0-9]","");
+			
+			if(childMap.get(grandParents[i]).contains(childName))
+			{
+				return false;
+			}
+		}
+		
+		int counter = 0;
+		
+		while(token)
+		{
+			for(int i=0;i<grandParents.length;i++)
+			{
+				String[] greatGrandParents = getParent(grandParents[i]).split(",");
+				
+				for(int j=0;j<greatGrandParents.length;j++)
+				{
+					// filters the strings
+					greatGrandParents[i].replaceAll("[^a-zA-Z0-9]","");
+				}
+				if(childMap.get(greatGrandParents[i]).contains(childName))
+				{
+					return false;
+				}
+			}
+			
+			counter++;
+			if(counter > 100)
+			{
+				return true;
+			}
+		}
+		
+		
+		return true;
+	}
+	
+	// ---- My functions above /\ --------------------------- Required functions below \/ -----
 	
 	public boolean setParent(String childName, String parentName)
 	{
@@ -97,6 +162,7 @@ public class Family {
 		ArrayList<String> parents = parentMap.get(childName);
 		ArrayList<String> children = childMap.get(parentName);
 		
+		// Bad implementation of ancestor checking 
 		// Checks if the parent to be set is a child of the child to be set
 		if (!childMap.containsKey(childName)) {
 			if (children == null) {
@@ -147,7 +213,7 @@ public class Family {
 		checkSetName(name);
 		
 		// if there is no gender and the partners gender is not male make gender male
-		if(genderMap.get(name) == null & genderMap.get(partnerMap.get(name)) != "male") 
+		if(genderMap.get(name) == null && genderMap.get(partnerMap.get(name)) != "male") 
 		{
 			genderMap.put(name, "male");
 		
